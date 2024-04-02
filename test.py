@@ -1,23 +1,21 @@
-#!/usr/bin/python3
+#!/usr/bin/env python3
 
-from transformers import AutoModelForCausalLM, AutoTokenizer
+from ctransformers import AutoModelForCausalLM
 
-device = "cuda" # the device to load the model onto
+def main():
 
-model = AutoModelForCausalLM.from_pretrained("mistralai/Mistral-7B-Instruct-v0.2")
-tokenizer = AutoTokenizer.from_pretrained("mistralai/Mistral-7B-Instruct-v0.2")
 
-messages = [
-    {"role": "user", "content": "What is your favourite condiment?"},
-    {"role": "assistant", "content": "Well, I'm quite partial to a good squeeze of fresh lemon juice. It adds just the right amount of zesty flavour to whatever I'm cooking up in the kitchen!"},
-    {"role": "user", "content": "Do you have mayonnaise recipes?"}
-]
+    gpu_layers = 50
 
-encodeds = tokenizer.apply_chat_template(messages, return_tensors="pt")
+    model_name = "TheBloke/Mistral-7B-Instruct-v0.1-GGUF"
+    model_file = "mistral-7b-instruct-v0.1.Q4_K_M.gguf"
+    model_type = "mistral"
+    llm = AutoModelForCausalLM.from_pretrained(model_name, model_file=model_file, model_type=model_type, gpu_layers=gpu_layers)
 
-model_inputs = encodeds.to(device)
-model.to(device)
+    input_text = "can i give you some PDF to make you learn more things ?"
+    generated_text = llm(input_text)
+    print(generated_text)
 
-generated_ids = model.generate(model_inputs, max_new_tokens=1000, do_sample=True)
-decoded = tokenizer.batch_decode(generated_ids)
-print(decoded[0])
+if __name__ == "__main__":
+    main()
+ 
